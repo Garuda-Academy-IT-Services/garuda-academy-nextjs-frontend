@@ -1,25 +1,25 @@
-# Next.js + Turbopack
+# Garuda Academy Next.js Frontend
 
-This example allows you to get started with `next dev --turbo` quicky.
-
-## Deploy your own
-
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/vercel/next.js/tree/canary/examples/with-turbopack&project-name=with-turbopack&repository-name=with-turbopack)
+- TypeScript
+- Bun used as package manager (Nodejs is used as runtime as Nextjs App dir relies on APIs not yet available in Bun)
+- Next.js 14 + Turbopack + App router
+- ESLint
+- Prettier
+- Tailwind CSS + tailwind-animate + tailwind-merge
+- shadcn/ui default config
 
 ## How to use
 
-Execute [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app) with [npm](https://docs.npmjs.com/cli/init), [Yarn](https://yarnpkg.com/lang/en/docs/cli/create/), or [pnpm](https://pnpm.io) to bootstrap the example:
-
 ```bash
-npx create-next-app --example with-turbopack with-turbopack-app
+Dev: bun dev
+Build: bun run build
+Start: bun run start (prod build)
 ```
 
-```bash
-yarn create next-app --example with-turbopack with-turbopack-app
-```
+Alternatively, if Bun is not installed, you can use the following commands:
 
 ```bash
-pnpm create next-app --example with-turbopack with-turbopack-app
+Dev: npm dev
+Build: npm run build
+Start: npm start (prod build)
 ```
-
-Deploy it to the cloud with [Vercel](https://vercel.com/new?utm_source=github&utm_medium=readme&utm_campaign=next-example) ([Documentation](https://nextjs.org/docs/deployment)).
