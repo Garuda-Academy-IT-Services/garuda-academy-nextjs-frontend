@@ -1,6 +1,5 @@
 'use client'
 import { useSearchParams } from 'next/navigation'
-import { Suspense } from 'react'
 import { Breadcrumbs } from './breadcrumbs'
 import { categories } from '@/lib/video-api/categories'
 
@@ -22,9 +21,5 @@ export function BreadcrumbsWrapper() {
     { label: getCategoryName(category) },
   ]
 
-  return (
-    <Suspense>
-      <Breadcrumbs items={breadcrumbItems} />
-    </Suspense>
-  )
+  return <Breadcrumbs items={breadcrumbItems} />
 }
