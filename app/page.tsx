@@ -1,17 +1,20 @@
 import { Button } from '@/components/ui/button'
+import Link from 'next/link'
 
 export default function Page() {
   return (
-    <div className='flex-center h-full gap-10'>
+    <div className='flex-center h-full gap-12'>
       <div>
         <h1 className='text-4xl font-bold'>
-          Learn to <span className='text-yellow-500'>code</span>.
+          Tanulj meg <span className='text-yellow-500'>kódolni</span>.
         </h1>
         <h1 className='text-4xl font-bold'>
-          Build <span className='text-yellow-500'>projects</span>.
+          Építs <span className='text-yellow-500'>alkalmazásokat</span>.
         </h1>
       </div>
-      <Button>Get Started</Button>
+      <Link href='/videos'>
+        <Button>Tovább</Button>
+      </Link>
     </div>
   )
 }
