@@ -2,7 +2,9 @@ export interface Category {
   id: number
   name: string
   url: string
+  description?: string
   isCommercial: boolean
+  logoUrl: string
 }
 
 export interface User {
