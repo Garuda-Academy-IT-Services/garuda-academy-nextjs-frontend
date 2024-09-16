@@ -1,6 +1,6 @@
-import { Abel, Anton, M_PLUS_Code_Latin } from 'next/font/google'
+import { Manrope, Anton, M_PLUS_Code_Latin } from 'next/font/google'
 
-export const fontSans = Abel({
+export const fontSans = Manrope({
   display: 'swap',
   subsets: ['latin'],
   variable: '--font-sans',

@@ -4,7 +4,7 @@ import Link from 'next/link'
 export default function Page() {
   return (
     <div className='flex-center h-full gap-12'>
-      <div>
+      <div className='text-center'>
         <h1 className='text-4xl font-bold'>
           Tanulj meg <span className='text-yellow-500'>kódolni</span>.
         </h1>
