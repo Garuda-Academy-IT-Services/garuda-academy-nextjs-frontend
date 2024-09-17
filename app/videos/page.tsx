@@ -22,11 +22,10 @@ export default async function Page({ searchParams }: Props) {
                   <Card className='flex h-full flex-col justify-between bg-black/5 pt-6 shadow transition-shadow hover:shadow-lg dark:bg-white/5 dark:transition-colors dark:hover:bg-white/10'>
                     <CardContent className='flex-center'>
                       <Image
-                        src={`https://placehold.co/600x350/grey/darkgrey?text=${video.category.name}\\nvideo%20thumbnail&font=roboto`}
+                        src={`https://img.youtube.com/vi/${video.url}/mqdefault.jpg`}
                         alt={video.name}
                         width={600}
                         height={400}
-                        unoptimized
                         priority
                         className='object-cointain w-full rounded-md'
                       />
