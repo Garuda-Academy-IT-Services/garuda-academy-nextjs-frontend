@@ -20,7 +20,7 @@ export default function RootLayout({ children }: PropsWithChildren) {
       className={`${fontSans.variable} ${fontDisplay.variable} ${fontMono.variable}`}
       suppressHydrationWarning
     >
-      <body className='grid min-h-[100dvh] max-w-screen-2xl grid-rows-[auto_1fr_auto]'>
+      <body className='bg-light-gradient dark:bg-dark-gradient grid min-h-[100dvh] max-w-screen-2xl grid-rows-[auto_1fr_auto]'>
         <ThemeProvider attribute='class' defaultTheme='system' enableSystem disableTransitionOnChange>
           <Header />
           <main>{children}</main>
