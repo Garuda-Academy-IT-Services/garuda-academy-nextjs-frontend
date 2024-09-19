@@ -12,6 +12,11 @@ const nextConfig = {
         hostname: 'img.youtube.com',
         pathname: '/vi/**',
       },
+      {
+        protocol: 'https',
+        hostname: 'avatars.githubusercontent.com',
+        pathname: '/u/**',
+      },
     ],
   },
 }
