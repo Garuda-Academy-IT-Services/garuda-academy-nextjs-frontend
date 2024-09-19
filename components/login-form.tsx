@@ -1,15 +1,15 @@
 'use client'
 
-import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
 import { signInSchema } from '@/lib/validation/auth-validation'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { signIn } from 'next-auth/react'
+import Link from 'next/link'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
-import { signIn } from 'next-auth/react'
 
 export const description = 'Bejelentkezési űrlap'
 
@@ -24,10 +24,10 @@ export function LoginForm() {
   }
 
   return (
-    <Card className='mx-auto max-w-sm max-sm:min-w-max'>
+    <Card className='mx-auto min-w-[350px] max-w-sm border-none bg-transparent'>
       <CardHeader>
         <CardTitle className='text-2xl text-yellow-500'>Bejelentkezés</CardTitle>
-        <CardDescription>Add meg a felhasználóneved és jelszavad</CardDescription>
+        <CardDescription>Add meg a felhasználóneved és jelszavad, vagy válassz egy más módot</CardDescription>
       </CardHeader>
       <CardContent>
         <Form {...form}>
@@ -37,7 +37,7 @@ export function LoginForm() {
               name='username'
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Felhasználónév</FormLabel>
+                  <FormLabel className='w-full text-start inline-block'>Felhasználónév</FormLabel>
                   <FormControl>
                     <Input placeholder='' {...field} type='username' />
                   </FormControl>
@@ -50,7 +50,12 @@ export function LoginForm() {
               name='password'
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Jelszó</FormLabel>
+                  <div className='flex justify-between'>
+                    <FormLabel>Jelszó</FormLabel>
+                    <Link href='#' className='ml-auto inline-block text-xs underline'>
+                      Elfelejtetted a jelszavad?
+                    </Link>
+                  </div>
                   <FormControl>
                     <Input placeholder='' {...field} type='password' />
                   </FormControl>
@@ -63,30 +68,6 @@ export function LoginForm() {
             </Button>
           </form>
         </Form>
-        {/* <div className='grid gap-2'>
-            <Label htmlFor='email' className='text-start'>
-              Felhasználónév
-            </Label>
-            <Input id='email' type='email' placeholder='email@pelda.hu' required />
-          </div>
-          <div className='grid gap-2'>
-            <div className='flex items-center'>
-              <Label htmlFor='password'>Jelszó</Label>
-              <Link href='#' className='ml-auto inline-block text-sm underline'>
-                Elfelejtetted a jelszavad?
-              </Link>
-            </div>
-            <Input id='password' type='password' required />
-          </div>
-          <Button type='submit' className='w-full'>
-            Bejelentkezés
-          </Button> */}
-        {/* <Separator />
-          <div className='flex justify-center gap-4'>
-            <OAuthButton provider='github' />
-            <OAuthButton provider='google' />
-            <OAuthButton provider='discord' />
-          </div> */}
         <div className='mt-4 text-center text-sm'>
           Nincs még fiókod?{' '}
           <Link href='#' className='underline'>

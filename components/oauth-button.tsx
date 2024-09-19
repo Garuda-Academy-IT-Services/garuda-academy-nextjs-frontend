@@ -30,7 +30,7 @@ export function OAuthButton({ provider }: { provider: 'github' | 'google' | 'dis
         await signIn(key)
       }}
     >
-      <Button type='submit' variant={'outline'} title={`Bejelentkezés ${name} fiókkal`}>
+      <Button type='submit' variant={'outline'} title={`Bejelentkezés ${name} fiókkal`} className='min-w-20'>
         {icon}
       </Button>
     </form>
