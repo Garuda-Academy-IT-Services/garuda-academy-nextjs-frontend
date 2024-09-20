@@ -2,6 +2,7 @@ import type { User } from 'next-auth'
 
 import NextAuth from 'next-auth'
 import GitHub from 'next-auth/providers/github'
+import Google from 'next-auth/providers/google'
 import Credentials from 'next-auth/providers/credentials'
 import loginUser from './video-api/login-user'
 import { signInSchema } from './validation/auth-validation'
@@ -16,6 +17,7 @@ type Credentials = {
 export const { handlers, signIn, signOut, auth } = NextAuth({
   providers: [
     GitHub,
+    Google,
     Credentials({
       // You can specify which fields should be submitted, by adding keys to the `credentials` object.
       // e.g. domain, username, password, 2FA token, etc.
@@ -28,9 +30,9 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         // Validate credentials with Zod schema
         const { username, password } = await signInSchema.parseAsync(credentials)
 
+        // ** We are on server side, so we could do the following **
         // logic to salt and hash password
         // const pwHash = saltAndHashPassword(credentials.password)
-
         // logic to verify if the user exists
         // user = await getUserFromDb(credentials.email, pwHash)
 
