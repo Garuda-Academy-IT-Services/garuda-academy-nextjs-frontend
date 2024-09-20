@@ -1,10 +1,15 @@
+export type SVGLogo = React.FunctionComponent<React.SVGProps<SVGSVGElement>> & {
+  src: string
+}
+
 export interface Category {
   id: number
   name: string
   url: string
   description?: string
   isCommercial: boolean
-  logoUrl: string
+  logo: SVGLogo
+  logo2?: SVGLogo
 }
 
 export interface User {

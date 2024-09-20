@@ -1,4 +1,9 @@
 import type { Category } from '../types/video-api.types'
+import ScratchLogo from '@/lib/media/scratch_logo.svg'
+import PythonLogo from '@/lib/media/python_logo.svg'
+import HTML5Logo from '@/lib/media/html5_logo.svg'
+import CSS3Logo from '@/lib/media/css3_logo.svg'
+import MySqlLogo from '@/lib/media/mysql_logo.svg'
 
 export const categories: Category[] = [
   {
@@ -8,7 +13,7 @@ export const categories: Category[] = [
     description:
       'Tanulj kódolni szórakoztató módon! Készíts interaktív történeteket, játékokat és animációkat a Scratch segítségével.',
     isCommercial: false,
-    logoUrl: 'https://upload.wikimedia.org/wikipedia/commons/f/f1/Scratchlogo.svg',
+    logo: ScratchLogo,
   },
   {
     id: 2,
@@ -17,15 +22,16 @@ export const categories: Category[] = [
     description:
       'Sajátítsd el a világ legnépszerűbb nyelvét! Készíts alkalmazásokat, elemezz adatokat, és automatizálj feladatokat a Python segítségével.',
     isCommercial: false,
-    logoUrl: 'https://upload.wikimedia.org/wikipedia/commons/f/f8/Python_logo_and_wordmark.svg',
+    logo: PythonLogo,
   },
   {
     id: 3,
-    name: 'HTML + CSS',
+    name: 'HTML+CSS',
     url: '',
     description: 'Tervezd meg a lenyűgöző weboldalakat! Ismerd meg a web alapjait az HTML és CSS segítségével.',
     isCommercial: false,
-    logoUrl: 'https://upload.wikimedia.org/wikipedia/commons/6/61/HTML5_logo_and_wordmark.svg',
+    logo: HTML5Logo,
+    logo2: CSS3Logo,
   },
   {
     id: 4,
@@ -34,6 +40,6 @@ export const categories: Category[] = [
     description:
       'Szabadítsd fel az adatbázisok erejét! Tanuld meg hatékonyan kezelni és lekérdezni az adatokat a MySQL segítségével.',
     isCommercial: false,
-    logoUrl: 'https://labs.mysql.com/common/logos/mysql-logo.svg',
+    logo: MySqlLogo,
   },
 ] as const
