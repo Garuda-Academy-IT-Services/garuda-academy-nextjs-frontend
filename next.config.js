@@ -24,6 +24,16 @@ const nextConfig = {
       },
     ],
   },
+  experimental: {
+    turbo: {
+      rules: {
+        '*.react.svg': {
+          loaders: ['@svgr/webpack'],
+          as: '*.js',
+        },
+      },
+    },
+  },
 }
 
 export default nextConfig
