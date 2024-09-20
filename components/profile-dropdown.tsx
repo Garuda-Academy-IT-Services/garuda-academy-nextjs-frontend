@@ -21,7 +21,7 @@ export function ProfileDropdown(session: Partial<Session>) {
   const { setTheme } = useTheme()
 
   return (
-    <DropdownMenu>
+    <DropdownMenu modal={false}>
       <DropdownMenuTrigger>
         <UserAvatar user={session?.user} />
       </DropdownMenuTrigger>
