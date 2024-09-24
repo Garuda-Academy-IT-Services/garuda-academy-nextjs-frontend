@@ -2,5 +2,16 @@
   "extends": [
     "next/core-web-vitals",
     "next/typescript"
+  ],
+  "overrides": [
+    {
+      "files": ["*.ts", "*.tsx"],
+      "rules": {
+        "no-unused-vars": "off",
+        "@typescript-eslint/consistent-type-imports": "warn",
+        "size-limit": "off",
+        "@typescript-eslint/no-explicit-any": "off"
+      }
+    }
   ]
 }
