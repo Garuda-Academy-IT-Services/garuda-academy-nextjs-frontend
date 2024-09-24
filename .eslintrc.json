@@ -1,17 +1,14 @@
 {
-  "extends": [
-    "next/core-web-vitals",
-    "next/typescript"
-  ],
+  "extends": ["next", "next/typescript", "prettier"],
   "overrides": [
     {
       "files": ["*.ts", "*.tsx"],
       "rules": {
         "no-unused-vars": "off",
         "@typescript-eslint/consistent-type-imports": "warn",
-        "size-limit": "off",
         "@typescript-eslint/no-explicit-any": "off"
       }
     }
-  ]
+  ],
+  "ignorePatterns": ["**/node_modules/**", "**/dist/**", "**/build/**", "**/public/**"]
 }
