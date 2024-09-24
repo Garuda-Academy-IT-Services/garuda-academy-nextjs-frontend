@@ -3,6 +3,7 @@ import Link from 'next/link'
 import { AuthDialog } from '../auth-dialog'
 import { ModeToggle } from '../mode-togle'
 import { ProfileDropdown } from '../profile-dropdown'
+import { OAuthButton } from '../oauth-button'
 
 export default async function Header() {
   const session = await auth()
@@ -16,7 +17,17 @@ export default async function Header() {
         </h3>
       </Link>
       <div className='flex items-center gap-4'>
-        {session ? <ProfileDropdown user={session?.user} /> : <AuthDialog />}
+        {session ? (
+          <ProfileDropdown user={session?.user} />
+        ) : (
+          <AuthDialog>
+            <div className='flex justify-center gap-4 pt-6'>
+              <OAuthButton provider='github' />
+              <OAuthButton provider='google' />
+              {/* <OAuthButton provider='discord' /> */}
+            </div>
+          </AuthDialog>
+        )}
         {!session ? <ModeToggle /> : null}
       </div>
     </header>

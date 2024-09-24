@@ -4,7 +4,7 @@ import NextAuth from 'next-auth'
 import GitHub from 'next-auth/providers/github'
 import Google from 'next-auth/providers/google'
 import Credentials from 'next-auth/providers/credentials'
-import loginUser from './video-api/login-user'
+import loginUser from './video-api/actions/login-user'
 import { signInSchema } from './validation/auth-validation'
 
 type Credentials = {
@@ -13,6 +13,16 @@ type Credentials = {
 }
 
 // TODO: augment CredentialsInput type instead of redefining it
+// For that we need to define the user's properties in the `user` object, such as:
+// {
+//   id: string
+//   name: string
+//   email: string
+//   image: string
+//   role: string
+//   accessToken: string
+//   expiresAt: number
+// }
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
   providers: [
@@ -26,7 +36,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         password: { label: 'Jelszó', type: 'password' },
       },
       authorize: async (credentials) => {
-        let user = null
+        let user: User | null = null
         // Validate credentials with Zod schema
         const { username, password } = await signInSchema.parseAsync(credentials)
 
@@ -36,8 +46,11 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         // logic to verify if the user exists
         // user = await getUserFromDb(credentials.email, pwHash)
 
-        const response = await loginUser(username, password)
-        const { jwt } = response
+        const { jwt, message } = await loginUser(username, password)
+
+        if (message) {
+          throw new Error(message)
+        }
 
         //TODO: get real user from db
 
@@ -46,8 +59,8 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
             id: '1',
             name: 'Test User',
             email: 'test@test.com',
-            image: 'https://placehold.co/200x200@2x.png',
-          } as User
+            image: '',
+          }
         }
 
         if (!user) {
@@ -68,3 +81,33 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     },
   },
 })
+
+/**
+ ** Supported actions by Auth.js. Each action map to a REST API endpoint.
+ ** Some actions have a `GET` and `POST` variant, depending on if the action
+ ** changes the state of the server.
+ **
+ ** - **`"callback"`**:
+ **   - **`GET`**: Handles the callback from an [OAuth provider](https://authjs.dev/reference/core/providers#oauth2configprofile).
+ **   - **`POST`**: Handles the callback from a [Credentials provider](https://authjs.dev/getting-started/providers/credentials#credentialsconfigcredentialsinputs).
+ ** - **`"csrf"`**: Returns the raw CSRF token, which is saved in a cookie (encrypted).
+ ** It is used for CSRF protection, implementing the [double submit cookie](https://cheatsheetseries.owasp.org/cheatsheets/Cross-Site_Request_Forgery_Prevention_Cheat_Sheet.html#double-submit-cookie) technique.
+ ** :::note
+ ** Some frameworks have built-in CSRF protection and can therefore disable this action. In this case, the corresponding endpoint will return a 404 response. Read more at [`skipCSRFCheck`](https://authjs.dev/reference/core#skipcsrfcheck).
+ ** _⚠ We don't recommend manually disabling CSRF protection, unless you know what you're doing._
+ ** :::
+ ** - **`"error"`**: Renders the built-in error page.
+ ** - **`"providers"`**: Returns a client-safe list of all configured providers.
+ ** - **`"session"`**:
+ **   - **`GET`**: Returns the user's session if it exists, otherwise `null`.
+ **   - **`POST`**: Updates the user's session and returns the updated session.
+ ** - **`"signin"`**:
+ **   - **`GET`**: Renders the built-in sign-in page.
+ **   - **`POST`**: Initiates the sign-in flow.
+ ** - **`"signout"`**:
+ **   - **`GET`**: Renders the built-in sign-out page.
+ **   - **`POST`**: Initiates the sign-out flow. This will invalidate the user's session (deleting the cookie, and if there is a session in the database, it will be deleted as well).
+ ** - **`"verify-request"`**: Renders the built-in verification request page.
+ ** - **`"webauthn-options"`**:
+ **   - **`GET`**: Returns the options for the WebAuthn authentication and registration flows.
+ */

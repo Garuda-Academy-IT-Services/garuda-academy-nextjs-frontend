@@ -11,8 +11,6 @@ import Link from 'next/link'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 
-export const description = 'Bejelentkezési űrlap'
-
 export function LoginForm() {
   const form = useForm<z.infer<typeof signInSchema>>({
     resolver: zodResolver(signInSchema),
@@ -31,13 +29,13 @@ export function LoginForm() {
       </CardHeader>
       <CardContent>
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className='space-y-6'>
+          <form onSubmit={form.handleSubmit(onSubmit)} className='space-y-4'>
             <FormField
               control={form.control}
               name='username'
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className='w-full text-start inline-block'>Felhasználónév</FormLabel>
+                  <FormLabel className='inline-block w-full text-start'>Felhasználónév</FormLabel>
                   <FormControl>
                     <Input placeholder='' {...field} type='username' />
                   </FormControl>
@@ -70,7 +68,7 @@ export function LoginForm() {
         </Form>
         <div className='mt-4 text-center text-sm'>
           Nincs még fiókod?{' '}
-          <Link href='#' className='underline'>
+          <Link href='?action=signup' className='underline'>
             Regisztrálj!
           </Link>
         </div>
