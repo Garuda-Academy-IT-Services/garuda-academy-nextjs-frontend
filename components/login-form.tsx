@@ -1,5 +1,7 @@
 'use client'
 
+import type { z } from 'zod'
+
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form'
@@ -9,7 +11,6 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { signIn } from 'next-auth/react'
 import Link from 'next/link'
 import { useForm } from 'react-hook-form'
-import { z } from 'zod'
 
 export function LoginForm() {
   const form = useForm<z.infer<typeof signInSchema>>({
