@@ -15,17 +15,15 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: PropsWithChildren) {
   return (
-    <html
-      lang='en'
-      className={`${fontSans.variable} ${fontDisplay.variable} ${fontMono.variable}`}
-      suppressHydrationWarning
-    >
-      <body className='mx-auto grid min-h-[100dvh] max-w-screen-2xl grid-rows-[auto_1fr_auto] bg-light-gradient dark:bg-dark-gradient'>
-        <ThemeProvider attribute='class' defaultTheme='system' enableSystem disableTransitionOnChange>
-          <Header />
-          <main>{children}</main>
-          <Footer />
-        </ThemeProvider>
+    <html lang='en' className={`${fontSans.variable} ${fontDisplay.variable} ${fontMono.variable}`} suppressHydrationWarning>
+      <body className='bg-light-gradient dark:bg-dark-gradient'>
+        <div className='mx-auto min-h-[100dvh] max-w-screen-2xl grid grid-rows-[auto_1fr_auto]'>
+          <ThemeProvider attribute='class' defaultTheme='system' enableSystem disableTransitionOnChange>
+            <Header />
+            <main>{children}</main>
+            <Footer />
+          </ThemeProvider>
+        </div>
       </body>
     </html>
   )
