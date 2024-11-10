@@ -9,7 +9,7 @@ export default async function Header() {
   const session = await auth()
 
   return (
-    <header className='sticky top-0 flex h-16 items-center justify-between bg-black/5 p-2 backdrop-blur dark:bg-white/5 md:h-20 md:p-6'>
+    <header className='sticky top-0 z-50 flex h-16 items-center justify-between bg-black/5 p-2 backdrop-blur-lg dark:bg-white/5 md:h-20 md:p-6 [@media(min-width:1536px)]:rounded-b-lg'>
       <Link href='/'>
         <h3 className='select-none font-display text-2xl md:text-3xl'>
           <span>GARUDA</span>
