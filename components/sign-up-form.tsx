@@ -43,8 +43,8 @@ export function SignUpForm() {
   async function onSubmit(values: z.infer<typeof signupSchema>) {
     const res = await signup(values)
 
-    if (res.errorName) handleFormError(res.message)
-    if (res.id) handleFormSuccess(res)
+    if ('errorName' in res) handleFormError(res.message)
+    if ('id' in res) handleFormSuccess(res)
   }
 
   return (

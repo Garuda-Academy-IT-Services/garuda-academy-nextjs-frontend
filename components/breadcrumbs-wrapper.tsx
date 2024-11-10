@@ -3,15 +3,18 @@ import { useSearchParams } from 'next/navigation'
 import { Breadcrumbs } from './breadcrumbs'
 import { categories } from '@/lib/video-api/categories'
 
-export type Crumb = { href?: string; label: string }
+export interface Crumb {
+  href?: string
+  label: string
+}
 
 export function BreadcrumbsWrapper() {
   const params = useSearchParams()
   const category = params.get('category')
 
   const getCategoryName = (id: string | null) => {
-    const cat = categories?.find((category) => category.id === Number(id))?.name
-    return cat || ''
+    const cat = categories.find((category) => category.id === Number(id))?.name
+    return cat ?? ''
   }
 
   const breadcrumbItems: Crumb[] = [

@@ -1,4 +1,4 @@
-import type { Category } from '../types/video-api.types'
+import type { Category, SVGLogo } from '../types/video-api.types'
 import ScratchLogo from '@/lib/media/scratch_logo.svg'
 import PythonLogo from '@/lib/media/python_logo.svg'
 import HTML5Logo from '@/lib/media/html5_logo.svg'
@@ -13,7 +13,7 @@ export const categories: Category[] = [
     description:
       'Tanulj kódolni szórakoztató módon! Készíts interaktív történeteket, játékokat és animációkat a Scratch segítségével.',
     isCommercial: false,
-    logo: ScratchLogo,
+    logo: ScratchLogo as SVGLogo,
   },
   {
     id: 2,
@@ -22,7 +22,7 @@ export const categories: Category[] = [
     description:
       'Sajátítsd el a világ legnépszerűbb nyelvét! Készíts alkalmazásokat, elemezz adatokat, és automatizálj feladatokat a Python segítségével.',
     isCommercial: false,
-    logo: PythonLogo,
+    logo: PythonLogo as SVGLogo,
   },
   {
     id: 3,
@@ -30,8 +30,8 @@ export const categories: Category[] = [
     url: '',
     description: 'Tervezd meg a lenyűgöző weboldalakat! Ismerd meg a web alapjait az HTML és CSS segítségével.',
     isCommercial: false,
-    logo: HTML5Logo,
-    logo2: CSS3Logo,
+    logo: HTML5Logo as SVGLogo,
+    logo2: CSS3Logo as SVGLogo,
   },
   {
     id: 4,
@@ -40,6 +40,6 @@ export const categories: Category[] = [
     description:
       'Szabadítsd fel az adatbázisok erejét! Tanuld meg hatékonyan kezelni és lekérdezni az adatokat a MySQL segítségével.',
     isCommercial: false,
-    logo: MySqlLogo,
+    logo: MySqlLogo as SVGLogo,
   },
 ] as const

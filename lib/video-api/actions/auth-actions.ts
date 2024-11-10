@@ -1,6 +1,7 @@
 'use server'
 
 import type { SignupFormData } from '@/lib/types/common.types'
+import type { User } from '@/lib/types/video-api.types'
 
 import { signupSchema } from '@/lib/validation/auth-validation'
 
@@ -17,20 +18,19 @@ export async function signup(values: SignupFormData) {
   }
 
   // TODO: doing password encryption and hashing might be best to be done here
-  if (validatedFields.success) {
-    try {
-      const signupData = checkPasswordsMatch(validatedFields.data)
-      const signupResponse = await createUser(signupData)
-      console.log('signupResponse', signupResponse)
-      return signupResponse
-    } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Unknown error during sign up.'
-      console.log('signup error', errorMessage)
-      return {
-        errorName: 'API Error',
-        message: errorMessage,
-        status: 500,
-      }
+
+  try {
+    const signupData = checkPasswordsMatch(validatedFields.data)
+    const signupResponse = await createUser(signupData)
+    console.log('signupResponse', signupResponse)
+    return signupResponse
+  } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error during sign up.'
+    console.log('signup error', errorMessage)
+    return {
+      errorName: 'API Error',
+      message: errorMessage,
+      status: 500,
     }
   }
 }
@@ -48,7 +48,7 @@ function checkPasswordsMatch(data: SignupFormData): Omit<SignupFormData, 'passCo
   throw new Error('A megadott jelszavak nem egyeznek')
 }
 
-async function createUser(formData: Omit<SignupFormData, 'passConf'>): Promise<any> {
+async function createUser(formData: Omit<SignupFormData, 'passConf'>): Promise<User> {
   const res = await fetch(`${process.env.API_URL}/users/create`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -61,9 +61,9 @@ async function createUser(formData: Omit<SignupFormData, 'passConf'>): Promise<a
     }),
   })
 
-  const jsonResponse = await res.json()
+  const jsonResponse = (await res.json()) as User | { message: string }
 
-  if (!res.ok) throw new Error(jsonResponse.message)
+  if (!res.ok) throw new Error((jsonResponse as { message: string }).message)
 
-  return jsonResponse
+  return jsonResponse as User
 }

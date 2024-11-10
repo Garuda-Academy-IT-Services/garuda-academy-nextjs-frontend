@@ -18,8 +18,8 @@ export function LoginForm() {
     defaultValues: { username: '', password: '' },
   })
 
-  function onSubmit(values: z.infer<typeof signInSchema>) {
-    signIn('credentials', { ...values })
+  async function onSubmit(values: z.infer<typeof signInSchema>) {
+    await signIn('credentials', { ...values })
   }
 
   return (

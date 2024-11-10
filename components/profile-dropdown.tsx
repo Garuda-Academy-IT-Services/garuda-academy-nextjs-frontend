@@ -23,7 +23,7 @@ export function ProfileDropdown(session: Partial<Session>) {
   return (
     <DropdownMenu modal={false}>
       <DropdownMenuTrigger>
-        <UserAvatar user={session?.user} />
+        <UserAvatar user={session.user} />
       </DropdownMenuTrigger>
       <DropdownMenuContent align='end' className='rounded-lg p-3'>
         <DropdownMenuLabel className='select-none'>Beállítások</DropdownMenuLabel>

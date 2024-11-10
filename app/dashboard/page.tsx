@@ -15,7 +15,7 @@ type ExtendedSession = Session & {
 // * This page is only accessible to admin users *
 export default async function Page() {
   const session = (await auth()) as ExtendedSession
-  const userRole = session?.user?.role
+  const userRole = session.user?.role
 
   if (userRole === 'admin') {
     return <AdminDashboard />

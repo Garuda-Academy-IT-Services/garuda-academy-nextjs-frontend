@@ -22,7 +22,7 @@ export default async function Page() {
         <CardContent className='flex gap-6'>
           <div className='h-auto w-36 overflow-clip rounded-lg'>
             <Image
-              src={user.image || 'https://placehold.co/200x200@2x.png'}
+              src={user.image ?? 'https://placehold.co/200x200@2x.png'}
               alt={user.image ? `${user.name}'s profile picture` : 'No profile picture'}
               width={600}
               height={400}

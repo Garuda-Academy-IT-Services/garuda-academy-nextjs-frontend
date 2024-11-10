@@ -18,7 +18,7 @@ export default async function Header() {
       </Link>
       <div className='flex items-center gap-4'>
         {session ? (
-          <ProfileDropdown user={session?.user} />
+          <ProfileDropdown user={session.user} />
         ) : (
           <AuthDialog>
             <div className='flex justify-center gap-4 pt-6'>

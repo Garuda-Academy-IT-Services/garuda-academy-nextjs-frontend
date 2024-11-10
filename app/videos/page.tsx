@@ -5,8 +5,8 @@ import getVideosByCategory from '@/lib/video-api/get-videos-by-category'
 import Image from 'next/image'
 import Link from 'next/link'
 
-type Props = {
-  searchParams: { [key: string]: string | string[] | undefined }
+interface Props {
+  searchParams: Record<string, string | string[] | undefined>
 }
 
 export default async function Page({ searchParams }: Props) {
@@ -23,7 +23,7 @@ export default async function Page({ searchParams }: Props) {
                   <VideoCard video={video} />
                 </Link>
               ))
-            : categories?.map((category) => (
+            : categories.map((category) => (
                 <Link key={category.id} href={`/videos?category=${category.id}`}>
                   <Card className='flex h-full flex-col justify-between bg-black/5 shadow transition-shadow hover:shadow-lg dark:bg-white/5 dark:transition-colors dark:hover:bg-white/10'>
                     <CardHeader>
