@@ -1,12 +1,12 @@
 'use server'
 
-import type { SignupFormData } from '@/lib/types/common.types'
+import type { SignUpFormData } from '@/lib/types/common.types'
 import type { User } from '@/lib/types/video-api.types'
 
-import { signupSchema } from '@/lib/validation/auth-validation'
+import { signUpFormSchema } from '@/lib/validation/auth-validation'
 
-export async function signup(values: SignupFormData) {
-  const validatedFields = signupSchema.safeParse(values)
+export async function signup(values: SignUpFormData) {
+  const validatedFields = signUpFormSchema.safeParse(values)
 
   if (!validatedFields.success) {
     return {
@@ -35,7 +35,7 @@ export async function signup(values: SignupFormData) {
   }
 }
 
-function checkPasswordsMatch(data: SignupFormData): Omit<SignupFormData, 'passConf'> {
+function checkPasswordsMatch(data: SignUpFormData): Omit<SignUpFormData, 'passConf'> {
   const { firstname, lastname, email, password, passConf } = data
   if (password === passConf) {
     return {
@@ -48,7 +48,7 @@ function checkPasswordsMatch(data: SignupFormData): Omit<SignupFormData, 'passCo
   throw new Error('A megadott jelszavak nem egyeznek')
 }
 
-async function createUser(formData: Omit<SignupFormData, 'passConf'>): Promise<User> {
+async function createUser(formData: Omit<SignUpFormData, 'passConf'>): Promise<User> {
   const res = await fetch(`${process.env.API_URL}/users/create`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },

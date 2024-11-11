@@ -1,11 +1,12 @@
 import type { User } from 'next-auth'
+import type { SignInResponse } from './validation/auth-validation'
 
 import NextAuth from 'next-auth'
 import GitHub from 'next-auth/providers/github'
 import Google from 'next-auth/providers/google'
 import Credentials from 'next-auth/providers/credentials'
-import loginUser from './video-api/actions/login-user'
-import { signInSchema } from './validation/auth-validation'
+import signInWithCredentials from './video-api/actions/login-user'
+import { signInFormSchema } from './validation/auth-validation'
 
 type Credentials = {
   username: string
@@ -29,54 +30,62 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     GitHub,
     Google,
     Credentials({
-      // You can specify which fields should be submitted, by adding keys to the `credentials` object.
-      // e.g. domain, username, password, 2FA token, etc.
+      /// You can specify which fields should be submitted, by adding keys to the `credentials` object.
+      /// e.g. domain, username, password, 2FA token, etc.
       credentials: {
         username: { label: 'Felhasználónév' },
         password: { label: 'Jelszó', type: 'password' },
       },
       authorize: async (credentials) => {
         let user: User | null = null
-        // Validate credentials with Zod schema
-        const { username, password } = await signInSchema.parseAsync(credentials)
 
-        // ** We are on server side, so we could do the following **
-        // logic to salt and hash password
-        // const pwHash = saltAndHashPassword(credentials.password)
-        // logic to verify if the user exists
-        // user = await getUserFromDb(credentials.email, pwHash)
+        try {
+          /// Validate credentials with Zod schema
+          const { username, password } = await signInFormSchema.parseAsync(credentials)
 
-        const { jwt, message } = await loginUser(username, password)
+          // We are on server side, so we could do the following
+          /// logic to salt and hash password
+          /// const pwHash = saltAndHashPassword(credentials.password)
+          /// logic to verify if the user exists
+          /// user = await getUserFromDb(credentials.email, pwHash)
 
-        if (message) {
-          throw new Error(message)
-        }
+          const response: SignInResponse = await signInWithCredentials(username, password)
 
-        //TODO: get real user from db
+          console.log(response)
 
-        if (jwt) {
-          user = {
-            id: '1',
-            name: 'Test User',
-            email: 'test@test.com',
-            image: '',
+          if ('message' in response) {
+            throw new Error(response.message)
           }
-        }
 
-        if (!user) {
-          // No user found, so this is their first attempt to login
-          // meaning this is also the place you could do registration
-          throw new Error('User not found.')
-        }
+          if ('user' in response) {
+            user = {
+              id: response.user.id,
+              name: response.user.username,
+              email: response.user.email,
+              image: response.user.pictureUrl,
+            }
+          }
 
-        // return user object with their profile data
-        return user
+          if (!user) {
+            /// No user found, so this is their first attempt to login
+            /// meaning this is also the place you could do registration
+            throw new Error('User not found.')
+          }
+
+          /// return user object with their profile data
+          return user
+        } catch (error) {
+          if (error instanceof Error) {
+            throw new Error(error.message)
+          }
+          throw error
+        }
       },
     }),
   ],
   callbacks: {
     authorized: ({ auth }) => {
-      // Logged in users are authenticated, otherwise redirect to login page
+      /// Logged in users are authenticated, otherwise redirect to login page
       return !!auth
     },
   },

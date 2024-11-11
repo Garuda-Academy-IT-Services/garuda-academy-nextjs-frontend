@@ -1,6 +1,18 @@
 import { z } from 'zod'
 
-export const signInSchema = z.object({
+export const roleSchema = z.object({
+  id: z.string(),
+  name: z.string(),
+})
+
+export const userSchema = z.object({
+  id: z.string(),
+  username: z.string(),
+  email: z.string(),
+  pictureUrl: z.string().url().nullable(),
+})
+
+export const signInFormSchema = z.object({
   username: z.string({ required_error: 'Felhasználónév kötelező' }).min(1, 'Felhasználónév kötelező').trim(),
   password: z
     .string({ required_error: 'Jelszó kötelező' })
@@ -10,7 +22,7 @@ export const signInSchema = z.object({
     .trim(),
 })
 
-export const signupSchema = z
+export const signUpFormSchema = z
   .object({
     firstname: z.string().min(2, { message: 'A keresztnévnek legalább 2 betűt kell tartalmaznia' }).trim(),
     lastname: z.string().min(2, { message: 'A vezetéknévnek legalább 2 betűt kell tartalmaznia' }).trim(),
@@ -32,4 +44,19 @@ export const signupSchema = z
     path: ['passConf'],
   })
 
-export type SignupFormData = z.infer<typeof signupSchema>
+export const signInSuccessSchema = z.object({
+  jwt: z.string(),
+  user: userSchema.extend({
+    role: roleSchema,
+  }),
+})
+
+export const signInErrorSchema = z.object({
+  message: z.string(),
+})
+
+export const signInResponseSchema = z.union([signInSuccessSchema, signInErrorSchema])
+
+export type SignInFormData = z.infer<typeof signInFormSchema>
+export type SignUpFormData = z.infer<typeof signUpFormSchema>
+export type SignInResponse = z.infer<typeof signInResponseSchema>

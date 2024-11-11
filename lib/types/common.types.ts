@@ -1,4 +1,4 @@
-import type { SignupFormData } from '../validation/auth-validation'
+import type { SignUpFormData } from '../validation/auth-validation'
 
 type SignupFormState =
   | {
@@ -12,4 +12,4 @@ type SignupFormState =
     }
   | undefined
 
-export type { SignupFormState, SignupFormData }
+export type { SignupFormState, SignUpFormData }

@@ -1,23 +1,23 @@
 'use client'
 
-import type { SignupFormData } from '@/lib/types/common.types'
+import type { SignUpFormData } from '@/lib/types/common.types'
 import type { z } from 'zod'
 
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { signupSchema } from '@/lib/validation/auth-validation'
+import { signUpFormSchema } from '@/lib/validation/auth-validation'
 import { signup } from '@/lib/video-api/actions/auth-actions'
 import { zodResolver } from '@hookform/resolvers/zod'
-import Link from 'next/link'
 import { useForm } from 'react-hook-form'
 import { FormInputField } from './form-input-field'
 import { Form } from './ui/form'
 import { Spinner } from './ui/loader'
+import Link from 'next/link'
 
 export function SignUpForm() {
   const defaultValues = { firstname: '', lastname: '', email: '', password: '', passConf: '' }
-  const resolver = zodResolver(signupSchema)
-  const form = useForm<SignupFormData>({ resolver, defaultValues })
+  const resolver = zodResolver(signUpFormSchema)
+  const form = useForm<SignUpFormData>({ resolver, defaultValues })
 
   const handleFormError = (errorMessage: string) => {
     if (errorMessage.includes('email') || errorMessage.includes('felhasználónév')) {
@@ -40,7 +40,7 @@ export function SignUpForm() {
     form.reset()
   }
 
-  async function onSubmit(values: z.infer<typeof signupSchema>) {
+  async function onSubmit(values: z.infer<typeof signUpFormSchema>) {
     const res = await signup(values)
 
     if ('errorName' in res) handleFormError(res.message)
