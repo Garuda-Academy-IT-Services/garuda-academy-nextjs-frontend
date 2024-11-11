@@ -1,10 +1,13 @@
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import type { Session } from 'next-auth'
+
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 
 export default function UserAvatar(session: Partial<Session>) {
   if (!session.user) return null
 
   function getInitials(name: string) {
+    if (!name || !name.includes(' ')) return 'XX'
+
     const firstName = name.split(' ')[0].toUpperCase()
     const lastName = name.split(' ')[1].toUpperCase()
     return firstName[0] + lastName[0]
