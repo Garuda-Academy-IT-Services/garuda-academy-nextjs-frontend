@@ -10,8 +10,6 @@ export default async function Page() {
 
   const { user } = session
 
-  if (!user) throw new Error('User not found within session')
-
   return (
     <div>
       <Card className='bg-card/60 backdrop-blur'>
