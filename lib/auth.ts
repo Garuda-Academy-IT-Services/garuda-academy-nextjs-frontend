@@ -1,4 +1,5 @@
-import type { User } from 'next-auth'
+import type { JWT } from 'next-auth/jwt'
+import type { DefaultSession, User } from 'next-auth'
 import type { SignInResponse } from './validation/auth-validation'
 
 import NextAuth from 'next-auth'
@@ -7,31 +8,36 @@ import Google from 'next-auth/providers/google'
 import Credentials from 'next-auth/providers/credentials'
 import signInWithCredentials from './video-api/actions/login-user'
 import { signInFormSchema } from './validation/auth-validation'
+import { handleInvalidLoginError } from './auth-errors'
 
-type Credentials = {
-  username: string
-  password: string
+interface UserJWT {
+  /** Additional fields to be added to the user object */
+  role?: string
+  permissions?: string[]
+  accessToken?: string
 }
 
-// TODO: augment CredentialsInput type instead of redefining it
-// For that we need to define the user's properties in the `user` object, such as:
-// {
-//   id: string
-//   name: string
-//   email: string
-//   image: string
-//   role: string
-//   accessToken: string
-//   expiresAt: number
-// }
+declare module 'next-auth' {
+  interface User extends UserJWT {
+    username?: string
+  }
+
+  interface Session extends DefaultSession {
+    user: User & DefaultSession['user']
+  }
+
+  interface Account {}
+}
+
+declare module 'next-auth/jwt' {
+  interface JWT extends UserJWT {}
+}
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
   providers: [
     GitHub,
     Google,
     Credentials({
-      /// You can specify which fields should be submitted, by adding keys to the `credentials` object.
-      /// e.g. domain, username, password, 2FA token, etc.
       credentials: {
         username: { label: 'Felhasználónév' },
         password: { label: 'Jelszó', type: 'password' },
@@ -40,53 +46,59 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         let user: User | null = null
 
         try {
-          /// Validate credentials with Zod schema
           const { username, password } = await signInFormSchema.parseAsync(credentials)
-
-          // We are on server side, so we could do the following
-          /// logic to salt and hash password
-          /// const pwHash = saltAndHashPassword(credentials.password)
-          /// logic to verify if the user exists
-          /// user = await getUserFromDb(credentials.email, pwHash)
-
           const response: SignInResponse = await signInWithCredentials(username, password)
-
-          console.log(response)
-
-          if ('message' in response) {
-            throw new Error(response.message)
-          }
 
           if ('user' in response) {
             user = {
-              id: response.user.id,
-              name: response.user.username,
+              id: response.user.id.toString(),
               email: response.user.email,
+              username: response.user.username,
+              name: 'Unknown User',
               image: response.user.pictureUrl,
+              role: response.user.role.name,
+              permissions: [],
             }
+          }
+
+          if ('jwt' in response && user) {
+            user.accessToken = response.jwt
           }
 
           if (!user) {
             /// No user found, so this is their first attempt to login
             /// meaning this is also the place you could do registration
-            throw new Error('User not found.')
           }
 
-          /// return user object with their profile data
           return user
         } catch (error) {
-          if (error instanceof Error) {
-            throw new Error(error.message)
-          }
-          throw error
+          handleInvalidLoginError(error)
+          return null
         }
       },
     }),
   ],
   callbacks: {
     authorized: ({ auth }) => {
-      /// Logged in users are authenticated, otherwise redirect to login page
       return !!auth
+    },
+    jwt: ({ token, user }: { token: JWT; user?: User }) => {
+      if (user) {
+        token.role = user.role
+        token.permissions = user.permissions
+        token.accessToken = user.accessToken
+      }
+      return token
+    },
+    session: ({ session, token }) => {
+      if (token.sub) {
+        session.user.id = token.sub
+        session.user.role = token.role
+        session.user.permissions = token.permissions
+        session.user.accessToken = token.accessToken
+      }
+
+      return session
     },
   },
 })
