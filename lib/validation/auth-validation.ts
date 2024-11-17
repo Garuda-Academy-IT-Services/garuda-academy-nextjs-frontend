@@ -1,12 +1,12 @@
 import { z } from 'zod'
 
 export const roleSchema = z.object({
-  id: z.string(),
+  id: z.number(),
   name: z.string(),
 })
 
 export const userSchema = z.object({
-  id: z.string(),
+  id: z.number(),
   username: z.string(),
   email: z.string(),
   pictureUrl: z.string().url().nullable(),
