@@ -2,13 +2,13 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { auth } from '@/lib/auth'
 import Image from 'next/image'
 import { redirect } from 'next/navigation'
-
 export default async function Page() {
   const session = await auth()
+  const user = session?.user
 
-  if (!session) redirect('/')
+  console.log(' on profile page ', session)
 
-  const { user } = session
+  if (!user) redirect('/api/auth/signin')
 
   return (
     <div>
