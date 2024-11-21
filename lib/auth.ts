@@ -1,17 +1,14 @@
-import type { JWT } from 'next-auth/jwt'
-import type { DefaultSession, User } from 'next-auth'
-import type { SignInResponse } from './validation/auth-validation'
+import 'next-auth/jwt'
 
 import NextAuth from 'next-auth'
 import GitHub from 'next-auth/providers/github'
 import Google from 'next-auth/providers/google'
 import Credentials from 'next-auth/providers/credentials'
-import signInWithCredentials from './video-api/actions/login-user'
+import signInWithCredentials from './video-api/auth/signin-with-credentials'
 import { signInFormSchema } from './validation/auth-validation'
-import { handleInvalidLoginError } from './auth-errors'
+// import getAccessToken from './video-api/auth/get-access-token'
 
 interface UserJWT {
-  /** Additional fields to be added to the user object */
   role?: string
   permissions?: string[]
   accessToken?: string
@@ -21,12 +18,6 @@ declare module 'next-auth' {
   interface User extends UserJWT {
     username?: string
   }
-
-  interface Session extends DefaultSession {
-    user: User & DefaultSession['user']
-  }
-
-  interface Account {}
 }
 
 declare module 'next-auth/jwt' {
@@ -39,40 +30,29 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     Google,
     Credentials({
       credentials: {
-        username: { label: 'Felhasználónév' },
-        password: { label: 'Jelszó', type: 'password' },
+        username: { label: 'Username' },
+        password: { label: 'Password', type: 'password' },
       },
       authorize: async (credentials) => {
-        let user: User | null = null
-
         try {
           const { username, password } = await signInFormSchema.parseAsync(credentials)
-          const response: SignInResponse = await signInWithCredentials(username, password)
+          const response = await signInWithCredentials(username, password)
 
-          if ('user' in response) {
-            user = {
-              id: response.user.id.toString(),
-              email: response.user.email,
-              username: response.user.username,
-              name: 'Unknown User',
-              image: response.user.pictureUrl,
-              role: response.user.role.name,
-              permissions: [],
-            }
+          if (!('user' in response)) {
+            return null
           }
 
-          if ('jwt' in response && user) {
-            user.accessToken = response.jwt
+          return {
+            id: response.user.id.toString(),
+            email: response.user.email,
+            username: response.user.username,
+            name: response.user.name ?? 'Unknown User',
+            image: response.user.pictureUrl,
+            role: response.user.role.name,
+            permissions: [],
+            accessToken: 'jwt' in response ? response.jwt : undefined,
           }
-
-          if (!user) {
-            /// No user found, so this is their first attempt to login
-            /// meaning this is also the place you could do registration
-          }
-
-          return user
         } catch (error) {
-          handleInvalidLoginError(error)
           return null
         }
       },
@@ -82,11 +62,36 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     authorized: ({ auth }) => {
       return !!auth
     },
-    jwt: ({ token, user }: { token: JWT; user?: User }) => {
-      if (user) {
-        token.role = user.role
-        token.permissions = user.permissions
-        token.accessToken = user.accessToken
+    jwt: async ({ token, user, account }) => {
+      // Initial sign in
+      // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+      if (account && user) {
+        // Handle OAuth providers (GitHub and Google)
+        // if (account.provider === 'github' || account.provider === 'google') {
+        //   try {
+        //     const response: SignInResponse = await getAccessToken({ account, user })
+
+        //     if ('user' in response && 'jwt' in response) {
+        //       return {
+        //         ...token,
+        //         role: response.user.role.name,
+        //         permissions: [],
+        //         accessToken: response.jwt,
+        //       }
+        //     }
+        //   } catch (error) {
+        //     console.error('Failed to get access token:', error)
+        //     return token
+        //   }
+        // }
+
+        // Handle credentials provider
+        return {
+          ...token,
+          role: user.role,
+          permissions: user.permissions,
+          accessToken: user.accessToken,
+        }
       }
       return token
     },
@@ -100,6 +105,9 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 
       return session
     },
+  },
+  pages: {
+    signOut: '/',
   },
 })
 
