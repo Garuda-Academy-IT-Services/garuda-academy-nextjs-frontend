@@ -6,10 +6,11 @@ import Image from 'next/image'
 import Link from 'next/link'
 
 interface Props {
-  searchParams: Record<string, string | string[] | undefined>
+  searchParams: Promise<Record<string, string | string[] | undefined>>
 }
 
-export default async function Page({ searchParams }: Props) {
+export default async function Page(props: Props) {
+  const searchParams = await props.searchParams;
   const category = searchParams.category as string // presence of this param means we are listing categories, not videos
   const videos = await getVideosByCategory(category)
 
