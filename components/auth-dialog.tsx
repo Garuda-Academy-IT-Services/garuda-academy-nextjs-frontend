@@ -10,7 +10,6 @@ import { SignUpForm } from './sign-up-form'
 export function AuthDialog({ children }: { children: React.ReactNode }) {
   const params = useSearchParams()
   const isSignUp = params.get('action') === 'signup'
-  const Form = isSignUp ? SignUpForm : LoginForm
 
   return (
     <Dialog>
@@ -20,12 +19,21 @@ export function AuthDialog({ children }: { children: React.ReactNode }) {
         </Button>
       </DialogTrigger>
       <DialogContent className='max-h-screen w-auto max-w-sm overflow-y-auto px-0 pt-0 mt-6'>
-        <DialogHeader className='space-y-0'>
-          <DialogTitle className='sr-only'>{isSignUp ? 'Regisztráció' : 'Bejelentkezés'}</DialogTitle>
-          <DialogDescription className='sr-only'>{isSignUp ? 'Regisztráció űrlap' : 'Bejelentkezés űrlap'}</DialogDescription>
-          <Form />
-          <Separator />
-          {children}
+        <DialogHeader>
+          <div 
+            key={isSignUp ? 'signup-content' : 'login-content'}
+            className='space-y-0'
+          >
+            <DialogTitle className='sr-only'>
+              {isSignUp ? 'Regisztráció' : 'Bejelentkezés'}
+            </DialogTitle>
+            <DialogDescription className='sr-only'>
+              {isSignUp ? 'Regisztráció űrlap' : 'Bejelentkezés űrlap'}
+            </DialogDescription>
+            {isSignUp ? <SignUpForm /> : <LoginForm />}
+            <Separator />
+            {children}
+          </div>
         </DialogHeader>
       </DialogContent>
     </Dialog>
