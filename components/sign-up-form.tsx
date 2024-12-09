@@ -12,10 +12,13 @@ import { useForm } from 'react-hook-form'
 import { FormInputField } from './form-input-field'
 import { Form } from './ui/form'
 import { Spinner } from './ui/loader'
+import { useRouter } from 'next/navigation'
+import { signIn } from 'next-auth/react'
 import Link from 'next/link'
 
 export function SignUpForm() {
-  const defaultValues = { firstname: '', lastname: '', email: '', password: '', passConf: '' }
+  const router = useRouter()
+  const defaultValues: SignUpFormData = { username: '', email: '', password: '', passConf: '' }
   const resolver = zodResolver(signUpFormSchema)
   const form = useForm<SignUpFormData>({ resolver, defaultValues })
 
@@ -26,18 +29,23 @@ export function SignUpForm() {
     if (errorMessage.includes('password') || errorMessage.includes('jelszó')) {
       form.setError('password', { message: errorMessage })
     }
-    if (errorMessage.includes('firstname') || errorMessage.includes('keresztnév')) {
-      form.setError('firstname', { message: errorMessage })
-    }
-    if (errorMessage.includes('lastname') || errorMessage.includes('vezetéknév')) {
-      form.setError('lastname', { message: errorMessage })
-    }
   }
 
-  const handleFormSuccess = (res: any) => {
+  const handleFormSuccess = async (res: any) => {
     alert('Sikeres regisztráció')
-    console.log('succcess res', res)
-    form.reset()
+
+    // Sign in with the newly created credentials
+    const result = await signIn('credentials', {
+      username: res.username,
+      password: form.getValues('password'),
+      redirect: false,
+    })
+
+    if (result?.error) {
+      console.error('Auto login failed:', result.error)
+    } else {
+      router.refresh()
+    }
   }
 
   async function onSubmit(values: z.infer<typeof signUpFormSchema>) {
@@ -51,16 +59,17 @@ export function SignUpForm() {
     <Card className='mx-auto max-w-sm border-none bg-transparent'>
       <CardHeader>
         <CardTitle className='text-2xl text-yellow-500'>Regisztráció</CardTitle>
-        <CardDescription>Add meg az alábbi adataid a fiók létrehozásához, vagy válassz egy más módot</CardDescription>
+        <CardDescription>Add meg az alábbi adataid a fiók létrehozásához, vagy válassz más módot</CardDescription>
       </CardHeader>
       <CardContent>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className='space-y-4'>
-            <div className='grid grid-cols-2 gap-4'>
+            {/* <div className='grid grid-cols-2 gap-4'>
               <FormInputField control={form.control} name='firstname' type='text' placeholder='' label='Keresztnév' />
               <FormInputField control={form.control} name='lastname' type='text' placeholder='' label='Vezetéknév' />
-            </div>
-            <FormInputField control={form.control} name='email' type='email' placeholder='' label='Email / Felhasználónév' />
+            </div> */}
+            <FormInputField control={form.control} name='username' type='text' placeholder='' label='Felhasználónév' />
+            <FormInputField control={form.control} name='email' type='email' placeholder='' label='Email' />
             <FormInputField control={form.control} name='password' type='password' placeholder='' label='Jelszó' />
             <FormInputField control={form.control} name='passConf' type='password' placeholder='' label='Jelszó ismét' />
             <Button type='submit' className='w-full'>

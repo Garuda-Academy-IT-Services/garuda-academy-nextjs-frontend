@@ -36,11 +36,10 @@ export async function signup(values: SignUpFormData) {
 }
 
 function checkPasswordsMatch(data: SignUpFormData): Omit<SignUpFormData, 'passConf'> {
-  const { firstname, lastname, email, password, passConf } = data
+  const { username, email, password, passConf } = data
   if (password === passConf) {
     return {
-      firstname,
-      lastname,
+      username,
       email,
       password,
     }
@@ -53,8 +52,6 @@ async function createUser(formData: Omit<SignUpFormData, 'passConf'>): Promise<U
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
-      firstname: formData.firstname,
-      lastname: formData.lastname,
       username: formData.email,
       email: formData.email,
       password: formData.password,
