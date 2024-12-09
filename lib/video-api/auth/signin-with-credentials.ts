@@ -1,7 +1,6 @@
 import type { SignInResponse } from '@/lib/validation/auth-validation'
 import { handleApiError } from '@/lib/error-handler'
-import { signInResponseSchema } from '@/lib/validation/auth-validation'
-
+//** Do not handle errors here otherwise they won't be caught by next-auth */
 export default async function signInWithCredentials(username: string, password: string): Promise<SignInResponse> {
   try {
     const res = await fetch(`${process.env.API_URL}/authentication/authenticate`, {
@@ -10,10 +9,7 @@ export default async function signInWithCredentials(username: string, password: 
       body: JSON.stringify({ username, password }),
     })
 
-    if (!res.ok) handleApiError(await res.json())
-
-    const validatedResponse = signInResponseSchema.parse(await res.json())
-    return validatedResponse
+    return res.json()
   } catch (error) {
     console.error('Error during sign in:', error)
     return handleApiError(error)
