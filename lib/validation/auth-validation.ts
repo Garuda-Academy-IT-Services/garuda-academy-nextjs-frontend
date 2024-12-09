@@ -25,8 +25,9 @@ export const signInFormSchema = z.object({
 
 export const signUpFormSchema = z
   .object({
-    firstname: z.string().min(2, { message: 'A keresztnévnek legalább 2 betűt kell tartalmaznia' }).trim(),
-    lastname: z.string().min(2, { message: 'A vezetéknévnek legalább 2 betűt kell tartalmaznia' }).trim(),
+    // firstname: z.string().min(2, { message: 'A keresztnévnek legalább 2 betűt kell tartalmaznia' }).trim(),
+    // lastname: z.string().min(2, { message: 'A vezetéknévnek legalább 2 betűt kell tartalmaznia' }).trim(),
+    username: z.string().min(2, { message: 'A felhasználónévnek legalább 2 betűt kell tartalmaznia' }).trim(),
     email: z.string().email({ message: 'Érvényes email címnek kell lennie' }).trim(),
     password: z
       .string()
