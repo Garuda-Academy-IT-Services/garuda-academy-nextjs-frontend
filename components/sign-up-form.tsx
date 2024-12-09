@@ -6,7 +6,7 @@ import type { z } from 'zod'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { signUpFormSchema } from '@/lib/validation/auth-validation'
-import { signup } from '@/lib/video-api/actions/auth-actions'
+import { signup } from '@/lib/video-api/auth/actions/auth-actions'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm } from 'react-hook-form'
 import { FormInputField } from './form-input-field'
@@ -15,6 +15,7 @@ import { Spinner } from './ui/loader'
 import { useRouter } from 'next/navigation'
 import { signIn } from 'next-auth/react'
 import Link from 'next/link'
+import { User } from 'next-auth'
 
 export function SignUpForm() {
   const router = useRouter()
@@ -31,7 +32,7 @@ export function SignUpForm() {
     }
   }
 
-  const handleFormSuccess = async (res: any) => {
+  const handleFormSuccess = async (res: User) => {
     alert('Sikeres regisztráció')
 
     // Sign in with the newly created credentials
@@ -52,7 +53,7 @@ export function SignUpForm() {
     const res = await signup(values)
 
     if ('errorName' in res) handleFormError(res.message)
-    if ('id' in res) handleFormSuccess(res)
+    if ('id' in res) await handleFormSuccess(res)
   }
 
   return (
