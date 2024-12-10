@@ -1,11 +1,13 @@
+/* eslint-disable @typescript-eslint/no-unnecessary-condition */
 import 'next-auth/jwt'
 
 import NextAuth from 'next-auth'
 import GitHub from 'next-auth/providers/github'
 import Google from 'next-auth/providers/google'
 import Credentials from 'next-auth/providers/credentials'
-import signInWithCredentials from './video-api/auth/signin-with-credentials'
+import signInWithCredentials from './video-api/auth/mutations/signin-with-credentials'
 import { signInFormSchema } from './validation/auth-validation'
+import { logger } from '@/lib/logger'
 // import getAccessToken from './video-api/auth/get-access-token'
 
 interface UserJWT {
@@ -36,12 +38,19 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       authorize: async (credentials) => {
         try {
           const { username, password } = await signInFormSchema.parseAsync(credentials)
+          logger.info('Attempting credentials authentication', { username })
+
           const response = await signInWithCredentials(username, password)
 
           if (!('user' in response)) {
+            logger.warn('Authentication failed - no user in response', { username })
             return null
           }
 
+          logger.info('Authentication successful', {
+            userId: response.user.id,
+            username: response.user.username,
+          })
           return {
             id: response.user.id.toString(),
             email: response.user.email,
@@ -53,6 +62,10 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
             accessToken: 'jwt' in response ? response.jwt : undefined,
           }
         } catch (error) {
+          logger.error('Authentication error', {
+            error: error instanceof Error ? error.message : 'Unknown error',
+            username: credentials?.username,
+          })
           return null
         }
       },
@@ -60,13 +73,22 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
   ],
   callbacks: {
     authorized: ({ auth }) => {
-      return !!auth
+      const isAuthorized = !!auth
+      logger.debug('Authorization check', {
+        isAuthorized,
+        userId: auth?.user?.id,
+      })
+      return isAuthorized
     },
     jwt: async ({ token, user, account }) => {
       // Initial sign in
-      // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
       if (account && user) {
-        // Handle OAuth providers (GitHub and Google)
+        logger.info('JWT callback - initial sign in', {
+          provider: account.provider,
+          userId: user.id,
+        })
+
+        // Get access token for OAuth providers (GitHub and Google for now) and add it to the session token
         // if (account.provider === 'github' || account.provider === 'google') {
         //   try {
         //     const response: SignInResponse = await getAccessToken({ account, user })
@@ -85,7 +107,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         //   }
         // }
 
-        // Handle credentials provider
+        // Add role, permissions and access token to the session token
         return {
           ...token,
           role: user.role,
@@ -97,6 +119,11 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     },
     session: ({ session, token }) => {
       if (token.sub) {
+        logger.debug('Session callback - updating session', {
+          userId: token.sub,
+          role: token.role,
+        })
+
         session.user.id = token.sub
         session.user.role = token.role
         session.user.permissions = token.permissions

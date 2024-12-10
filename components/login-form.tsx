@@ -11,26 +11,45 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { signIn } from 'next-auth/react'
 import Link from 'next/link'
 import { useForm } from 'react-hook-form'
+import { useRouter } from 'next/navigation'
 
 export function LoginForm() {
+  const router = useRouter()
   const form = useForm<z.infer<typeof signInFormSchema>>({
     resolver: zodResolver(signInFormSchema),
     defaultValues: { username: '', password: '' },
   })
 
   async function onSubmit(values: z.infer<typeof signInFormSchema>) {
-    await signIn('credentials', { ...values })
+    const result = await signIn('credentials', {
+      ...values,
+      redirect: false,
+    })
+
+    if (result?.error) {
+      form.setError('root', {
+        type: 'manual',
+        message: result.error === 'CredentialsSignin' ? 'Helytelen a felhasználóneved vagy jelszavad' : result.error,
+      })
+    } else {
+      router.refresh()
+    }
   }
 
   return (
     <Card className='mx-auto min-w-[350px] max-w-sm border-none bg-transparent'>
       <CardHeader>
         <CardTitle className='text-2xl text-yellow-500'>Bejelentkezés</CardTitle>
-        <CardDescription>Add meg a felhasználóneved és jelszavad, vagy válassz egy más módot</CardDescription>
+        <CardDescription>Add meg a felhasználóneved és jelszavad, vagy válassz más módot</CardDescription>
       </CardHeader>
       <CardContent>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className='space-y-4'>
+            {form.formState.errors.root && (
+              <div className="text-sm text-red-500 dark:text-red-400">
+                {form.formState.errors.root.message}
+              </div>
+            )}
             <FormField
               control={form.control}
               name='username'

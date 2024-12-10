@@ -1,11 +1,12 @@
 'use server'
 
 import type { SignUpFormData } from '@/lib/types/common.types'
-import type { User } from '@/lib/types/video-api.types'
+import type { User } from 'next-auth'
 
 import { signUpFormSchema } from '@/lib/validation/auth-validation'
 
 export async function signup(values: SignUpFormData) {
+  // Input validation with password confirmation
   const validatedFields = signUpFormSchema.safeParse(values)
 
   if (!validatedFields.success) {
@@ -17,12 +18,8 @@ export async function signup(values: SignUpFormData) {
     }
   }
 
-  // TODO: doing password encryption and hashing might be best to be done here
-
   try {
-    const signupData = checkPasswordsMatch(validatedFields.data)
-    const signupResponse = await createUser(signupData)
-    console.log('signupResponse', signupResponse)
+    const signupResponse = await createUser(validatedFields.data)
     return signupResponse
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : 'Unknown error during sign up.'
@@ -35,26 +32,11 @@ export async function signup(values: SignUpFormData) {
   }
 }
 
-function checkPasswordsMatch(data: SignUpFormData): Omit<SignUpFormData, 'passConf'> {
-  const { firstname, lastname, email, password, passConf } = data
-  if (password === passConf) {
-    return {
-      firstname,
-      lastname,
-      email,
-      password,
-    }
-  }
-  throw new Error('A megadott jelszavak nem egyeznek')
-}
-
 async function createUser(formData: Omit<SignUpFormData, 'passConf'>): Promise<User> {
   const res = await fetch(`${process.env.API_URL}/users/create`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
-      firstname: formData.firstname,
-      lastname: formData.lastname,
       username: formData.email,
       email: formData.email,
       password: formData.password,
