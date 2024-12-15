@@ -1,13 +1,9 @@
-import * as React from 'react';
-
 interface EmailTemplateProps {
-    firstName: string;
+    name: string;
 }
 
-export const SignupConfirmationTemplate: React.FC<Readonly<EmailTemplateProps>> = ({
-    firstName,
-}) => (
+export const SignupConfirmationTemplate = ({ name }: EmailTemplateProps) => (
     <div>
-        <h1>Welcome, {firstName}!</h1>
+        <h3>Welcome, {name}!</h3>
     </div>
 );
