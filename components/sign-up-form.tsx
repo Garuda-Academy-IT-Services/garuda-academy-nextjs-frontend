@@ -16,6 +16,11 @@ import { useRouter } from 'next/navigation'
 import { signIn } from 'next-auth/react'
 import Link from 'next/link'
 import { User } from 'next-auth'
+import { sendEmail } from '@/lib/mailer/actions/sendEmail'
+
+interface UserWithEmail extends User {
+  email: string;
+}
 
 export function SignUpForm() {
   const router = useRouter()
@@ -32,40 +37,39 @@ export function SignUpForm() {
     }
   }
 
+  function isUserWithEmail(user: User): user is UserWithEmail {
+    return typeof user.email === 'string'
+  }
+
   const handleFormSuccess = async (res: User) => {
+    if (!isUserWithEmail(res)) {
+      console.error('User is missing required email or username');
+      return;
+    }
+
     try {
-      const response = await fetch('/api/send', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          to: res.email,
-          subject: 'Welcome to Garuda Academy',
-          firstName: res.username,
-        }),
+      await sendEmail({
+        to: res.email,
+        subject: '[TEST] Welcome to Garuda Academy',
+        name: res.email, //TODO: change to user's name
       });
 
-      if (!response.ok) {
-        console.error('Failed to send confirmation email');
+      const result = await signIn('credentials', {
+        username: res.username,
+        password: form.getValues('password'),
+        redirect: false,
+      });
+
+      if (result?.error) {
+        console.error('Auto login failed:', result.error);
+      } else {
+        router.refresh();
       }
     } catch (error) {
       console.error('Error sending confirmation email:', error);
+      alert((error as Error).message)
     }
-
-    // Sign in with the newly created credentials
-    const result = await signIn('credentials', {
-      username: res.username,
-      password: form.getValues('password'),
-      redirect: false,
-    })
-
-    if (result?.error) {
-      console.error('Auto login failed:', result.error)
-    } else {
-      router.refresh()
-    }
-  }
+  };
 
   async function onSubmit(values: z.infer<typeof signUpFormSchema>) {
     const res = await signup(values)
@@ -83,10 +87,6 @@ export function SignUpForm() {
       <CardContent>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className='space-y-4'>
-            {/* <div className='grid grid-cols-2 gap-4'>
-              <FormInputField control={form.control} name='firstname' type='text' placeholder='' label='Keresztnév' />
-              <FormInputField control={form.control} name='lastname' type='text' placeholder='' label='Vezetéknév' />
-            </div> */}
             <FormInputField control={form.control} name='username' type='text' placeholder='' label='Felhasználónév' />
             <FormInputField control={form.control} name='email' type='email' placeholder='' label='Email' />
             <FormInputField control={form.control} name='password' type='password' placeholder='' label='Jelszó' />
