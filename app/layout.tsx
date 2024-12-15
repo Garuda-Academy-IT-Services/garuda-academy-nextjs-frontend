@@ -5,6 +5,7 @@ import Footer from '@/components/layout/footer'
 import Header from '@/components/layout/header'
 import { ThemeProvider } from '@/components/providers/theme-provider'
 import { fontSans, fontDisplay, fontMono } from '@/lib/fonts'
+import { SpeedInsights } from "@vercel/speed-insights/next"
 import '@/styles/globals.css'
 
 export const metadata: Metadata = {
@@ -24,6 +25,7 @@ export default function RootLayout({ children }: PropsWithChildren) {
             <Footer />
           </ThemeProvider>
         </div>
+        <SpeedInsights />
       </body>
     </html>
   )

@@ -33,7 +33,25 @@ export function SignUpForm() {
   }
 
   const handleFormSuccess = async (res: User) => {
-    alert('Sikeres regisztráció')
+    try {
+      const response = await fetch('/api/send', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          to: res.email,
+          subject: 'Welcome to Garuda Academy',
+          firstName: res.username,
+        }),
+      });
+
+      if (!response.ok) {
+        console.error('Failed to send confirmation email');
+      }
+    } catch (error) {
+      console.error('Error sending confirmation email:', error);
+    }
 
     // Sign in with the newly created credentials
     const result = await signIn('credentials', {
