@@ -1,7 +1,7 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { VideoCard } from '@/components/video-card'
 import { categories } from '@/lib/video-api/categories'
-import getVideosByCategory from '@/lib/video-api/get-videos-by-category'
+import getVideosByCategory from '@/lib/video-api/videos/queries/get-videos-by-category'
 import Image from 'next/image'
 import Link from 'next/link'
 

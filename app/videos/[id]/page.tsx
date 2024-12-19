@@ -1,9 +1,9 @@
 import { AspectRatio } from '@/components/ui/aspect-ratio'
 import { YoutubeEmbed } from '@/components/youtube-embed'
-import getVideoById from '@/lib/video-api/get-video-by-id'
+import getVideoById from '@/lib/video-api/videos/queries/get-video-by-id'
 
 export default async function Page(props: { params: Promise<{ id: string }> }) {
-  const params = await props.params;
+  const params = await props.params
   const video = await getVideoById(params.id)
 
   return (
