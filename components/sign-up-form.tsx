@@ -1,10 +1,12 @@
 'use client'
 
 import type { SignUpFormData } from '@/lib/types/common.types'
+import type { User } from 'next-auth'
 import type { z } from 'zod'
 
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { generateSignupToken, sendEmail } from '@/lib/mailer/actions/sendEmail'
 import { signUpFormSchema } from '@/lib/validation/auth-validation'
 import { signup } from '@/lib/video-api/auth/actions/auth-actions'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -15,8 +17,6 @@ import { Spinner } from './ui/loader'
 import { useRouter } from 'next/navigation'
 import { signIn } from 'next-auth/react'
 import Link from 'next/link'
-import { User } from 'next-auth'
-import { sendEmail } from '@/lib/mailer/actions/sendEmail'
 
 interface UserWithEmail extends User {
   email: string;
@@ -43,15 +43,19 @@ export function SignUpForm() {
 
   const handleFormSuccess = async (res: User) => {
     if (!isUserWithEmail(res)) {
-      console.error('User is missing required email or username');
+      console.error('User is missing required email');
       return;
     }
+
+    const signupToken = await generateSignupToken(res.email);
 
     try {
       await sendEmail({
         to: res.email,
         subject: '[TEST] Welcome to Garuda Academy',
-        name: res.email, //TODO: change to user's name
+        purpose: 'signup',
+        signupToken,
+        name: res.email.split('@')[0],
       });
 
       const result = await signIn('credentials', {
