@@ -1,4 +1,4 @@
-import type { Comment } from '../types/video-api.types'
+import type { Comment } from '@/lib/types/video-api.types'
 
 export default async function getCommentsByVideo(videoId: string) {
   try {

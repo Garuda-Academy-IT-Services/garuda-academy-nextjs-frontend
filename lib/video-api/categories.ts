@@ -1,4 +1,4 @@
-import type { Category, SVGLogo } from '../types/video-api.types'
+import type { Category, SVGLogo } from '@/lib/types/video-api.types'
 import ScratchLogo from '@/lib/media/scratch_logo.svg'
 import PythonLogo from '@/lib/media/python_logo.svg'
 import HTML5Logo from '@/lib/media/html5_logo.svg'

@@ -1,5 +1,5 @@
 import 'server-only'
-import type { Video } from '../types/video-api.types'
+import type { Video } from '@/lib/types/video-api.types'
 
 export default async function getVideosByCategory(category: string): Promise<Video[]> {
   try {
