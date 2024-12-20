@@ -29,7 +29,8 @@ export function SignUpForm() {
   const form = useForm<SignUpFormData>({ resolver, defaultValues })
 
   const handleFormError = (errorMessage: string) => {
-    if (errorMessage.includes('email') || errorMessage.includes('felhasználónév')) {
+    //TODO: typo in the error message
+    if (errorMessage.includes('email') || errorMessage.includes('felhaszálónév')) {
       form.setError('email', { message: errorMessage })
     }
     if (errorMessage.includes('password') || errorMessage.includes('jelszó')) {
