@@ -13,7 +13,7 @@ import { createHash } from 'crypto'
 const resend = new Resend(process.env.RESEND_API_KEY)
 
 // Define allowed email domains for additional security
-const ALLOWED_EMAIL_DOMAINS = siteConfig.domain
+// const ALLOWED_EMAIL_DOMAINS = siteConfig.domain
 
 // Extend schema to include a purpose field
 const sendEmailSchema = z.object({
@@ -68,10 +68,10 @@ export async function sendEmail(props: SendEmailRequest) {
     }
 
     // 3. Domain validation
-    const emailDomain = validatedData.to.split('@')[1]
-    if (!ALLOWED_EMAIL_DOMAINS.includes(emailDomain)) {
-      throw new Error('Invalid email domain')
-    }
+    // const emailDomain = validatedData.to.split('@')[1]
+    // if (!ALLOWED_EMAIL_DOMAINS.includes(emailDomain)) {
+    //   throw new Error('Invalid email domain')
+    // }
 
     // 4. Rate limiting
     const ip = (await headers()).get('x-forwarded-for') ?? 'unknown'
