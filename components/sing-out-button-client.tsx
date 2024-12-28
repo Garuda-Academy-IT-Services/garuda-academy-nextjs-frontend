@@ -1,21 +1,32 @@
 'use client'
+
 import { signOut } from 'next-auth/react'
 import { Button } from './ui/button'
 import { logger } from '@/lib/logger'
+import { useEffect, useState } from 'react'
 
 export function SignOutButtonClient() {
-  const protocol = window.location.protocol
-  const hostName = window.location.hostname
-  const redirectTo = `${protocol}//${hostName}`
+  const [redirectTo, setRedirectTo] = useState<string | null>(null)
 
-  logger.debug('SignOutButtonClient', {
-    protocol,
-    hostName,
-    redirectTo,
-  })
+  useEffect(() => {
+    const protocol = window.location.protocol
+    const hostName = window.location.hostname
+
+    setRedirectTo(`${protocol}//${hostName}`)
+  }, [])
+
+  useEffect(() => {
+    logger.debug('SignOutButtonClient', { redirectTo })
+  }, [redirectTo])
+
+  function handleSignOut() {
+    if (!redirectTo) return
+
+    void signOut({ redirectTo })
+  }
 
   return (
-    <Button onClick={() => signOut({ redirectTo })} size={'sm'} variant={'ghost'}>
+    <Button onClick={handleSignOut} size={'sm'} variant={'ghost'}>
       Kijelentkezés
     </Button>
   )
