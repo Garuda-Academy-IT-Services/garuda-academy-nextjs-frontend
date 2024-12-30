@@ -11,10 +11,11 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { signIn } from 'next-auth/react'
 import Link from 'next/link'
 import { useForm } from 'react-hook-form'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 
 export function LoginForm() {
   const router = useRouter()
+  const params = useSearchParams()
   const form = useForm<z.infer<typeof signInFormSchema>>({
     resolver: zodResolver(signInFormSchema),
     defaultValues: { username: '', password: '' },
@@ -32,6 +33,10 @@ export function LoginForm() {
         message: result.error === 'CredentialsSignin' ? 'Helytelen a felhasználóneved vagy jelszavad' : result.error,
       })
     } else {
+      // Remove action param when login success
+      const newParams = new URLSearchParams(params)
+      newParams.delete('action')
+      router.push(`?${newParams.toString()}`)
       router.refresh()
     }
   }
@@ -46,9 +51,7 @@ export function LoginForm() {
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className='space-y-4'>
             {form.formState.errors.root && (
-              <div className="text-sm text-red-500 dark:text-red-400">
-                {form.formState.errors.root.message}
-              </div>
+              <div className='text-sm text-red-500 dark:text-red-400'>{form.formState.errors.root.message}</div>
             )}
             <FormField
               control={form.control}
