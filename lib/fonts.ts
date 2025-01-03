@@ -1,4 +1,4 @@
-import { Manrope, Anton, M_PLUS_Code_Latin } from 'next/font/google'
+import { Manrope, Anton } from 'next/font/google'
 
 export const fontSans = Manrope({
   display: 'swap',
@@ -14,9 +14,9 @@ export const fontDisplay = Anton({
   weight: ['400'],
 })
 
-export const fontMono = M_PLUS_Code_Latin({
-  display: 'swap',
-  subsets: ['latin'],
-  variable: '--font-mono',
-  weight: ['400', '500', '600', '700'],
-})
+// export const fontMono = M_PLUS_Code_Latin({
+//   display: 'swap',
+//   subsets: ['latin'],
+//   variable: '--font-mono',
+//   weight: ['400', '500', '600', '700'],
+// })
